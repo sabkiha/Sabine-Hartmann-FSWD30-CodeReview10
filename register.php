@@ -18,6 +18,10 @@
   $name = strip_tags($name);
   $name = htmlspecialchars($name);
 
+  $surname = trim($_POST['surname']);
+  $surname = strip_tags($surname);
+  $surname = htmlspecialchars($surname);
+
   $email = trim($_POST['email']);
   $email = strip_tags($email);
   $email = htmlspecialchars($email);
@@ -29,13 +33,24 @@
   // basic name validation
   if (empty($name)) {
    $error = true;
-   $nameError = "Please enter your full name.";
-  } else if (strlen($name) < 3) {
+   $nameError = "Please enter your name.";
+  } else if (strlen($name) <= 1) {
    $error = true;
-   $nameError = "Name must have at least 3 characters.";
-  } else if (!preg_match("/^[a-zA-Z ]+$/",$name)) {
+   $nameError = "Name must have at least 1 character.";
+  } else if (!preg_match("/[a-zA-Z]/",$name)) {
    $error = true;
-   $nameError = "Name must contain letters and spaces.";
+   $nameError = "Name must contain only letters.";
+  }
+
+   if (empty($surname)) {
+   $error = true;
+   $surnameError = "Please enter your surname.";
+  } else if (strlen($surname) <= 1) {
+   $error = true;
+   $surnameError = "Name must have at least 1 character.";
+  } else if (!preg_match("/[a-zA-Z]/",$surname)) {
+   $error = true;
+   $surnameError = "Surname must contain only letters.";
   }
 
    //basic email validation
@@ -69,13 +84,14 @@
   // if there's no error, continue to signup
   if( !$error ) {
 
-   $query = "INSERT INTO users(userName,userEmail,userPass) VALUES('$name','$email','$password')";
+   $query = "INSERT INTO users(userName,Surname,userEmail,userPass) VALUES('$name', '$surname','$email','$password')";
    $res = mysqli_query($conn, $query);
 
    if ($res) {
     $errTyp = "success";
     $errMSG = "Your User Account with Big Library is registered, please login now";
     unset($name);
+    unset($surname);
     unset($email);
     unset($pass);
    } else {
@@ -154,15 +170,23 @@
            }
               ?>
     
-        <input type="text" name="name" class="form-control" placeholder="Enter Name" maxlength="50" value="<?php echo $name ?>" />
-        <span class="text-danger"><?php echo $nameError; ?></span>
-        <input type="email" name="email" class="form-control" placeholder="Enter Your Email" maxlength="40" value="<?php echo $email ?>" />
+<input type="text" name="name" class="form-control" placeholder="Enter Name" maxlength="50" value="<?php echo $name ?>" />
+    <span class="text-danger"><?php echo $nameError; ?></span>
+
+<input type="text" name="surname" class="form-control" placeholder="Enter Surname" maxlength="100" value="<?php echo $surname ?>" />
+    <span class="text-danger"><?php echo $surnameError; ?></span>
+
+<input type="email" name="email" class="form-control" placeholder="Enter Your Email" maxlength="40" value="<?php echo $email ?>" />
         <span class="text-danger"><?php echo $emailError; ?></span>
-        <input type="password" name="pass" class="form-control" placeholder="Enter Password" maxlength="15" />
+
+<input type="password" name="pass" class="form-control" placeholder="Enter Password" maxlength="15" />
         <span class="text-danger"><?php echo $passError; ?></span>
+
         <hr />
+
         <button type="submit" class="btn btn-block btn-primary" name="btn-signup">Register your account</button>
         <hr />
+
         <a href="index.php">Got to Login...</a>
     </form>
 </div>
